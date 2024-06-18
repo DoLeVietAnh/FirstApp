@@ -1,70 +1,157 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React from "react";
+import {
+  SafeAreaView,
+  View,
+  FlatList,
+  StyleSheet,
+  Text,
+  StatusBar,
+  Image,
+  Platform,
+} from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const DATA = [
+  {
+    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
+    title: "Bước 1: Xác định nhu cầu khách hàng",
+    content: "Vũ Văn Hoàng sắp đến hạn lúc 01/08/2020 09:00",
+    time: "20/07/2020 09:00",
+    status: "done",
+  },
+  {
+    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
+    title: "Bạn có khách hàng mới",
+    content:
+      "Chúc mừng bạn, bạn có khách hàng mới. Hãy mau chóng liên lạc ngay",
+    time: "20/08/2020 9:00",
+    status: "unread",
+  },
+  {
+    id: "58694a0f-3da1-471f-bd96-145571e29d72",
+    title: "Khách hàng được thêm bị trùng",
+    content:
+      "Rất tiếc, khách hàng được thêm vào đã tồn tại trong hệ thống. Vui lòng kiểm tra lại.",
+    time: "20/08/2020 6:00",
+    status: "unread",
+  },
+  {
+    id: "58694a0f-3da1-471f-bd96-145571e29d73",
+    title: "Khách hàng được chia sẻ bị trùng",
+    content:
+      "Rất tiếc, khách hàng được chia sẻ đã tồn tại trong hệ thống. Vui lòng kiểm tra lại.",
+    time: "20/08/2020 06:30",
+    status: "done",
+  },
+  {
+    id: "58694a0f-3da1-471f-bd96-145571e29d74",
+    title: "Công việc sắp đến hạng trong hôm nay",
+    content: "Bạn có 17 công việc sắp đến hạn trong hôm nay",
+    time: "20/08/2020 6:00",
+    status: "unread",
+  },
+  {
+    id: "58694a0f-3da1-471f-bd96-145571e29d75",
+    title: "Công việc đã quá hạn",
+    content: "Bạn có 2 công việc đã quá hạn",
+    time: "20/08/2020 6:00",
+    status: "done",
+  },
+];
 
-export default function HomeScreen() {
+type ItemProps = {
+  title: string;
+  content: string;
+  time: string;
+  status: string;
+};
+
+const Item = ({ title, content, time, status }: ItemProps) => (
+  <View style={[styles.item, status === "unread" && styles.unreadItem]}>
+    <Image
+      source={
+        status === "unread"
+          ? require("../../assets/images/unread-message.png")
+          : require("../../assets/images/books.png")
+      }
+      style={styles.icon}
+    />
+    <View style={styles.textContainer}>
+      <Text style={styles.title}>{title}</Text>
+      {content && <Text style={styles.content}>{content}</Text>}
+      {time && <Text style={styles.time}>{time}</Text>}
+    </View>
+  </View>
+);
+
+const App = () => {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Thông báo</Text>
+      </View>
+      <FlatList
+        data={DATA}
+        renderItem={({ item }) => (
+          <Item
+            title={item.title}
+            content={item.content}
+            time={item.time}
+            status={item.status}
+          />
+        )}
+        keyExtractor={(item) => item.id}
+      />
+    </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    marginTop: StatusBar.currentHeight || 0,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  header: {
+    padding: 15,
+    backgroundColor: "#f2f2f2",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  headerText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  item: {
+    flexDirection: "row",
+    backgroundColor: "#f2f2f2",
+    padding: 20,
+    marginVertical: 1,
+    marginHorizontal: 16,
+    alignItems: "center", // Align items vertically centered
+  },
+  textContainer: {
+    flex: 1, // Take up the remaining space
+  },
+  title: {
+    fontSize: 24,
+    paddingBottom: 5,
+    fontWeight: "bold",
+  },
+  content: {
+    fontSize: 12,
+  },
+  time: {
+    fontSize: 12,
+    color: "#cccccc",
+  },
+  unreadItem: {
+    backgroundColor: "#DDE6ED", // darker background for unread items
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    marginRight: 10, // Add some margin to the right for spacing
   },
 });
+
+export default App;
